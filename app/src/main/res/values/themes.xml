@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.TrackerForLegoMinifiguresSeries" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!--
+    TODO("Consider)
+    If the splash screen icon doesn't always appear, then use windowSplashScreenBehavior to specify
+     whether your app always displays the icon on the splash screen in Android 13 and higher.
+     Ex: <item name="android:windowSplashScreenBehavior">icon_preferred</item>
+     -->
+</resources>

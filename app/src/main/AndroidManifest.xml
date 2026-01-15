@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".TrackerForLegoMinifiguresSeriesApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TrackerForLegoMinifiguresSeries"
+        tools:targetApi="31">
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TrackerForLegoMinifiguresSeries">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+        If App Startup (a library) isn't used in the app, it can be removed completely. The reason
+        it's being removed is to properly configure WorkManager with Hilt in versions of WorkManager
+        2.6+. Basically, by using Hilt with WorkManager the WorkManager configuration is customized,
+        so the default initializer must be removed.
+
+        Note that it's also possible to remove only the WorkManagerInitializer node if
+        androidx.startup is used in the app to initialize other components.
+
+        https://developer.android.com/training/dependency-injection/hilt-jetpack#workmanager
+         -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+
+    </application>
+
+</manifest>
