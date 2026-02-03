@@ -9,10 +9,10 @@ This repository is a **public, read-only snapshot** of a production app and is n
 | Series | Minifigures | Minifigure Details |
 |---|---|---|
 | Browse and filter all series | Browse and filter all minifigures | View a minifigure's inventory |
-| ![](docs/images/series-screen.png) | ![](docs/images/minifigures-screen.png) | ![](docs/images/minifigure-details-screen.png) |
+| <img src="docs/images/series-screen.png" width="260"> | <img src="docs/images/minifigures-screen.png" width="260"> | <img src="docs/images/minifigure-details-screen.png" width="260"> |
 
 **Demo video (90s):**  
-Quick walkthrough of the app in action. 
+A quick walkthrough of the app in action.
 
 [▶ Watch the demo on YouTube](https://www.youtube.com/shorts/Q0i59GUzVGg)
 
