@@ -14,7 +14,7 @@ This repository is a **public, read-only snapshot** of a production app and is n
 **Demo video (90s):**  
 Quick walkthrough of the app in action. 
 
-[▶ Watch the demo on YouTube](https://youtu.be/video-link-here)
+[▶ Watch the demo on YouTube](https://www.youtube.com/shorts/Q0i59GUzVGg)
 
 <p align="center">
   <img alt="Demo preview of the app in action" 
