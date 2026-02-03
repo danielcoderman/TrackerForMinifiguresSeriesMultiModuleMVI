@@ -2,7 +2,7 @@
 
 An offline-first Android app for browsing and tracking LEGO® Collectible Minifigures, built with Kotlin, Jetpack Compose, Room, and background synchronization.
 
-This repository is a **public, read-only snapshot** of a production app and is no longer actively maintained.
+This repository is a **public, read-only snapshot** of a production app that is **no longer actively maintained**.
 
 ## Contents
 
