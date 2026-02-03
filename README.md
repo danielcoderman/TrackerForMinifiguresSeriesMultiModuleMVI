@@ -74,9 +74,9 @@ A quick walkthrough of the app in action.
 
 - **Transactional upserts with user-data preservation**  
   Server-owned fields are updated via transactional upserts, while user-owned state (e.g., collected, favorite flags) is preserved across syncs.
-
-- **Robust migration strategy with automated testing**  
-  Database migrations were written and verified using Room’s `MigrationTestHelper` to ensure schema correctness and prevent user data loss in production releases.
+  
+- **Robust migration strategy with automated validation**  
+  Schema evolution and data preservation were validated across database versions to support safe production upgrades.
 
 - **Reactive data streams with Kotlin Flow**  
   Room queries expose `Flow` streams, allowing the UI to react automatically to database updates without manual refresh logic.
