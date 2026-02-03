@@ -4,6 +4,17 @@ An offline-first Android app for browsing and tracking LEGO® Collectible Minifi
 
 This repository is a **public, read-only snapshot** of a production app and is no longer actively maintained.
 
+## Contents
+
+- [Screenshots / Demo](#screenshots--demo)
+- [App Features](#app-features)
+- [Tech Stack](#tech-stack)
+- [Technical Highlights](#technical-highlights)
+- [Architecture Overview](#architecture-overview)
+- [Local Database Deep Dive](#local-database-deep-dive)
+- [Data Synchronization Deep Dive](#data-synchronization-deep-dive)
+- [Lessons Learned / What I’d Improve](#lessons-learned--what-id-improve)
+
 ## Screenshots / Demo
 
 | Series | Minifigures | Minifigure Details |
@@ -487,7 +498,4 @@ Overall, this project emphasized iterative architectural refinement and making p
 
 ## License
 
-This project is licensed under the MIT License.
-
-It is provided as a read-only snapshot for educational and portfolio purposes.  
-No active development or support is planned.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
