@@ -4,6 +4,11 @@ An offline-first Android app for browsing and tracking LEGO® Collectible Minifi
 
 This repository is a **public, read-only snapshot** of a production app that is **no longer actively maintained**.
 
+## Related Project
+
+- **[Series and Minifigure Catalog REST API](https://github.com/danielcoderman/SeriesMinifigCatalogRestApiPublic)**  
+REST API backend providing series, minifigure, and inventory data.
+
 ## Contents
 
 - [Screenshots / Demo](#screenshots--demo)
