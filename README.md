@@ -58,7 +58,8 @@ A quick walkthrough of the app in action.
 - **Navigation Compose**
 - **Room** (prepackaged database, migrations, triggers)
 - **WorkManager** (background sync)
-- **Retrofit** + **Kotlin Serialization**
+- **Retrofit** (Kotlin Serialization)
+- **Paging 3** (efficient search result pagination)
 - **DataStore** (user preferences)
 - **Coil** (image loading)
 - **Hilt** (dependency injection)
