@@ -2,8 +2,6 @@
 
 An offline-first Android app for browsing and tracking LEGO® Collectible Minifigures, built with Kotlin, Jetpack Compose, Room, and background synchronization.
 
-This repository is a **public, read-only snapshot** of a production app that is **no longer actively maintained**.
-
 ## Related Project
 
 - **[Series and Minifigure Catalog REST API](https://github.com/danielcoderman/SeriesMinifigCatalogRestApiPublic)**  
@@ -12,6 +10,7 @@ REST API backend providing series, minifigure, and inventory data.
 ## Contents
 
 - [Screenshots / Demo](#screenshots--demo)
+- [Project Status](#project-status)
 - [App Features](#app-features)
 - [Tech Stack](#tech-stack)
 - [Technical Highlights](#technical-highlights)
@@ -36,6 +35,12 @@ A quick walkthrough of the app in action.
   <img alt="Demo preview of the app in action" 
        src="docs/demo/demo.gif" width="480">
 </p>
+
+## Project Status
+
+This repository is a public, read-only snapshot of a production app that was
+previously published on the Google Play Store. It is no longer actively
+maintained, and the backend service it synchronized with has been shut down.
 
 ## App Features
 
@@ -505,3 +510,7 @@ Overall, this project emphasized iterative architectural refinement and making p
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+Built by **Daniel Reyes** — [LinkedIn](https://linkedin.com/in/danielreyesp)
