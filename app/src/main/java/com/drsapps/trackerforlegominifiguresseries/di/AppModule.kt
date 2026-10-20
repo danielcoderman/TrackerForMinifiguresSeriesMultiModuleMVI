@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.room.Room
+import com.drsapps.trackerforlegominifiguresseries.BuildConfig
 import com.drsapps.trackerforlegominifiguresseries.data.local.TrackerForLegoMinifiguresSeriesDatabase
 import com.drsapps.trackerforlegominifiguresseries.data.remote.SeriesMinifigCatalogApi
 import com.drsapps.trackerforlegominifiguresseries.data.repository.AppStateRepositoryImpl
@@ -39,7 +40,9 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -155,9 +158,21 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSeriesMinifigCatalogApi(json: Json): SeriesMinifigCatalogApi {
+    fun provideOkHttpClient(): OkHttpClient {
+        // Render's free tier sleeps after 15 min idle and can take ~1 min to wake,
+        // which exceeds OkHttp's 10 sec defaults
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSeriesMinifigCatalogApi(json: Json, okHttpClient: OkHttpClient): SeriesMinifigCatalogApi {
         return Retrofit.Builder()
-            .baseUrl(SeriesMinifigCatalogApi.BASE_URL)
+            .baseUrl(BuildConfig.API_BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(SeriesMinifigCatalogApi::class.java)

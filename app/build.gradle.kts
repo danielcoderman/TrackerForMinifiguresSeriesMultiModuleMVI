@@ -1,4 +1,3 @@
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -10,18 +9,27 @@ plugins {
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
-// Initialize a new Properties() object called keystoreProperties
-val keystoreProperties = Properties()
-// Load the keystore.properties file into the keystoreProperties object.
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) keystorePropertiesFile.inputStream().use { load(it) }
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
+val apiBaseUrl: String = localProperties.getProperty("API_BASE_URL")
+    ?: error("Missing API_BASE_URL in local.properties. Add a line like API_BASE_URL=https://your-service.onrender.com/api/")
 
 android {
     signingConfigs {
-        create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
         }
     }
 
@@ -39,6 +47,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -71,7 +80,7 @@ android {
                 "proguard-rules.pro"
             )
 
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
         }
         // A temporary/test build variant
         create("tempa") {
@@ -89,6 +98,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -176,6 +186,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
 
     // Retrofit
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
 

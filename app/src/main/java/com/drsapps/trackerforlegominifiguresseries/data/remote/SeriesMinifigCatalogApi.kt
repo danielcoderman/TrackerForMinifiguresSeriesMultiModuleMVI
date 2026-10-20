@@ -25,7 +25,4 @@ interface SeriesMinifigCatalogApi {
         @Query("lastFetched") lastFetched: String? = null
     ): Response<List<MinifigureInventoryItemDto>>
 
-    companion object {
-        const val BASE_URL = "[REDACTED]"
-    }
 }
