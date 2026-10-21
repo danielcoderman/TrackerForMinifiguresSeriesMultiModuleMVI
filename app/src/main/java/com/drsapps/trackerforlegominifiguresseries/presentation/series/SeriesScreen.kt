@@ -47,15 +47,13 @@ fun SeriesScreen(
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean
 ) {
-    val filter by viewModel.filter.collectAsStateWithLifecycle()
-    val series by viewModel.series.collectAsStateWithLifecycle()
-    val isRefreshing by viewModel.isDataRefreshing.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     // Hoisted here, rather than inside the stateless SeriesScreen below, so this effect
     // collector and the Scaffold that displays the snackbar share the same SnackbarHostState.
     // A Channel-backed effect is delivered once to whichever collector is attached when it's
-    // sent, so unlike the old refreshMessage StateFlow there's no stale value left behind to
-    // clear when the screen leaves composition.
+    // sent, so unlike a value sitting in State there's no stale value left behind to clear when
+    // the screen leaves composition.
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -66,16 +64,13 @@ fun SeriesScreen(
     }
 
     SeriesScreen(
-        series = series,
-        filter = filter,
-        changeFilterAndSeries = viewModel::changeFilterAndSeries,
+        state = state,
+        onEvent = viewModel::onEvent,
         onSeriesImageClick = onSeriesImageClick,
         onSeriesClick = onSeriesClick,
         onSearchClicked = onSearchClicked,
         onVisibilityClicked = onVisibilityClicked,
         isNavigationRailShown = isNavigationRailShown,
-        isRefreshing = isRefreshing,
-        refreshData = viewModel::refreshData,
         snackbarHostState = snackbarHostState
     )
 }
@@ -83,16 +78,13 @@ fun SeriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeriesScreen(
-    series: List<Series>,
-    filter: SeriesFilter,
-    changeFilterAndSeries: (SeriesFilter) -> Unit,
+    state: SeriesState,
+    onEvent: (SeriesEvent) -> Unit,
     onSeriesImageClick: (id: Int) -> Unit,
     onSeriesClick: (id: Int, title: String) -> Unit,
     onSearchClicked: () -> Unit,
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean,
-    isRefreshing: Boolean,
-    refreshData: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     // Used for collapsing or hiding the top app bar
@@ -124,22 +116,22 @@ fun SeriesScreen(
                 .fillMaxSize()
         ) {
             SeriesFiltersScrollableTabRow(
-                filter = filter,
+                filter = state.filter,
                 resetScrollingPosition = {
                     lazyGridState.scrollToItem(0)
                 },
-                changeFilterAndSeries = changeFilterAndSeries,
+                changeFilterAndSeries = { filter -> onEvent(SeriesEvent.FilterChanged(filter)) },
                 isNavigationRailShown = isNavigationRailShown
             )
 
-            if (series.isEmpty()) {
+            if (state.series.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(start = 16.dp, top = 16.dp)
                 ) {
-                    when (filter) {
+                    when (state.filter) {
                         // Note: Don't have to worry about the case where the "All" filter displays
                         // no series. That would really only happen if someone purposely hides
                         // all the series. Showing a blank screen is fine in that case.
@@ -151,8 +143,8 @@ fun SeriesScreen(
                 }
             } else {
                 PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = refreshData,
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onEvent(SeriesEvent.Refresh) },
                 ) {
                     LazyVerticalGrid(
                         modifier = Modifier.fillMaxSize(),
@@ -162,12 +154,12 @@ fun SeriesScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(series) { series ->
+                        items(state.series) { series ->
                             SeriesCard(
                                 series = series,
                                 onSeriesImageClick = onSeriesImageClick,
                                 onSeriesClick = onSeriesClick,
-                                filter = filter
+                                filter = state.filter
                             )
                         }
                     }
@@ -183,37 +175,38 @@ fun SeriesScreen(
 fun SeriesScreenPreview() {
     TrackerForLegoMinifiguresSeriesTheme {
         SeriesScreen(
-            series = listOf(
-                Series(
-                    id = 1,
-                    name = "Series 1",
-                    imageUrl = "",
-                    numOfMinifigs = 16,
-                    releaseDate = "2010-06-01",
-                    favorite = true,
-                    numOfMinifigsCollected = 12,
-                    numOfMinifigsHidden = 2
+            state = SeriesState(
+                series = listOf(
+                    Series(
+                        id = 1,
+                        name = "Series 1",
+                        imageUrl = "",
+                        numOfMinifigs = 16,
+                        releaseDate = "2010-06-01",
+                        favorite = true,
+                        numOfMinifigsCollected = 12,
+                        numOfMinifigsHidden = 2
+                    ),
+                    Series(
+                        id = 2,
+                        name = "Series 2",
+                        imageUrl = "",
+                        numOfMinifigs = 16,
+                        releaseDate = "2010-09-01",
+                        favorite = true,
+                        numOfMinifigsCollected = 13,
+                        numOfMinifigsHidden = 0
+                    )
                 ),
-                Series(
-                    id = 2,
-                    name = "Series 2",
-                    imageUrl = "",
-                    numOfMinifigs = 16,
-                    releaseDate = "2010-09-01",
-                    favorite = true,
-                    numOfMinifigsCollected = 13,
-                    numOfMinifigsHidden = 0
-                )
+                filter = SeriesFilter.FAVORITES,
+                isRefreshing = false
             ),
-            filter = SeriesFilter.FAVORITES,
-            changeFilterAndSeries = {},
+            onEvent = {},
             onSeriesImageClick = {},
             onSeriesClick = { _,_ -> },
             onSearchClicked = {},
             onVisibilityClicked = {},
             isNavigationRailShown = false,
-            isRefreshing = false,
-            refreshData = {},
             snackbarHostState = remember { SnackbarHostState() }
         )
     }

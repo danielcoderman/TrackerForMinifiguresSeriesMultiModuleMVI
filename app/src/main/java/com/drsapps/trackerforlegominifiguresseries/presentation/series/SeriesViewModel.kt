@@ -33,23 +33,29 @@ class SeriesViewModel @Inject constructor(
     private val syncDataUseCase: SyncDataUseCase
 ) : ViewModel() {
 
-    val filter = savedStateHandle.getStateFlow(FILTER, SeriesFilter.ALL)
+    private val filter = savedStateHandle.getStateFlow(FILTER, SeriesFilter.ALL)
 
     private val _series = MutableStateFlow(emptyList<Series>())
-    val series = _series.asStateFlow()
+    private val series = _series.asStateFlow()
 
     // Tracks if there's an active refresh due to pull-to-refresh
     private val _isDataRefreshing = MutableStateFlow(false)
-    val isDataRefreshing = _isDataRefreshing.asStateFlow()
+    private val isDataRefreshing = _isDataRefreshing.asStateFlow()
 
     // One-shot outcomes of a sync (e.g. "Successfully synced"). A Channel, unlike a StateFlow,
     // delivers each value to exactly one collector and then discards it - so there's no stale
     // value left behind to replay when the screen re-subscribes, and nothing to manually clear.
-    private val _effect = Channel<SeriesEffect>()
+    //
+    // Buffered (rather than the default rendezvous/capacity-0 channel) so that send() never has
+    // to wait for a collector to be present. Without a buffer, send() suspends until the screen
+    // is actively collecting - and since refreshData() below sets isRefreshing back to false
+    // right after sending, that unrelated state update would get stuck too if the user had
+    // navigated away (e.g. to SeriesDetails) while the sync was still in flight.
+    private val _effect = Channel<SeriesEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
-    // The single state SeriesScreen will eventually render from (wired in a later step).
-    // Recomputed whenever filter, series, or isDataRefreshing changes.
+    // The single state SeriesScreen renders from. Recomputed whenever filter, series, or
+    // isDataRefreshing changes.
     val state: StateFlow<SeriesState> = combine(
         filter,
         series,
@@ -75,9 +81,8 @@ class SeriesViewModel @Inject constructor(
         getSeries(filter.value)
     }
 
-    // The single entry point user intents will eventually flow through (SeriesScreen is wired
-    // to call this, instead of the named methods below, in a later step). For now it just
-    // forwards to those existing methods.
+    // The single entry point for user intents. SeriesScreen only ever calls this - the methods
+    // below are private implementation details of how each event is handled.
     fun onEvent(event: SeriesEvent) {
         when (event) {
             is SeriesEvent.FilterChanged -> changeFilterAndSeries(event.filter)
@@ -88,7 +93,7 @@ class SeriesViewModel @Inject constructor(
     // This function fetches and saves the latest series and minifigure data
     // (minifigure inventory data included) from the REST API.
     // Note: The series flow above will pass any new series to collectors
-    fun refreshData() {
+    private fun refreshData() {
         _isDataRefreshing.value = true
         refreshDataJob?.cancel()
         refreshDataJob = viewModelScope.launch {
@@ -105,7 +110,7 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    fun changeFilterAndSeries(filter: SeriesFilter) {
+    private fun changeFilterAndSeries(filter: SeriesFilter) {
         savedStateHandle[FILTER] = filter
         getSeries(filter)
     }
