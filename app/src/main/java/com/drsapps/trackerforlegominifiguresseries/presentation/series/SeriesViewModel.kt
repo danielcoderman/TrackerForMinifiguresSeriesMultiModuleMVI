@@ -13,10 +13,16 @@ import com.drsapps.trackerforlegominifiguresseries.util.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,17 +33,44 @@ class SeriesViewModel @Inject constructor(
     private val syncDataUseCase: SyncDataUseCase
 ) : ViewModel() {
 
-    val filter = savedStateHandle.getStateFlow(FILTER, SeriesFilter.ALL)
+    private val filter = savedStateHandle.getStateFlow(FILTER, SeriesFilter.ALL)
 
     private val _series = MutableStateFlow(emptyList<Series>())
-    val series = _series.asStateFlow()
+    private val series = _series.asStateFlow()
 
     // Tracks if there's an active refresh due to pull-to-refresh
     private val _isDataRefreshing = MutableStateFlow(false)
-    val isDataRefreshing = _isDataRefreshing.asStateFlow()
+    private val isDataRefreshing = _isDataRefreshing.asStateFlow()
 
-    private val _refreshMessage = MutableStateFlow("")
-    val refreshMessage = _refreshMessage.asStateFlow()
+    // One-shot outcomes of a sync (e.g. "Successfully synced"). A Channel, unlike a StateFlow,
+    // delivers each value to exactly one collector and then discards it - so there's no stale
+    // value left behind to replay when the screen re-subscribes, and nothing to manually clear.
+    //
+    // Buffered (rather than the default rendezvous/capacity-0 channel) so that send() never has
+    // to wait for a collector to be present. Without a buffer, send() suspends until the screen
+    // is actively collecting - and since refreshData() below sets isRefreshing back to false
+    // right after sending, that unrelated state update would get stuck too if the user had
+    // navigated away (e.g. to SeriesDetails) while the sync was still in flight.
+    private val _effect = Channel<SeriesEffect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
+
+    // The single state SeriesScreen renders from. Recomputed whenever filter, series, or
+    // isDataRefreshing changes.
+    val uiState: StateFlow<SeriesUiState> = combine(
+        filter,
+        series,
+        isDataRefreshing
+    ) { filter, series, isRefreshing ->
+        SeriesUiState(
+            series = series,
+            filter = filter,
+            isRefreshing = isRefreshing
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SeriesUiState(filter = filter.value)
+    )
 
     private var getSeriesJob: Job? = null
 
@@ -48,31 +81,36 @@ class SeriesViewModel @Inject constructor(
         getSeries(filter.value)
     }
 
+    // The single entry point for user intents. SeriesScreen only ever calls this - the methods
+    // below are private implementation details of how each event is handled.
+    fun onEvent(event: SeriesEvent) {
+        when (event) {
+            is SeriesEvent.FilterChanged -> changeFilterAndSeries(event.filter)
+            SeriesEvent.Refresh -> refreshData()
+        }
+    }
+
     // This function fetches and saves the latest series and minifigure data
     // (minifigure inventory data included) from the REST API.
     // Note: The series flow above will pass any new series to collectors
-    fun refreshData() {
+    private fun refreshData() {
         _isDataRefreshing.value = true
         refreshDataJob?.cancel()
         refreshDataJob = viewModelScope.launch {
             val syncResult = syncDataUseCase()
             if (syncResult is SyncState.Success) {
-                _refreshMessage.value = "Successfully synced"
+                _effect.send(SeriesEffect.ShowSnackbar("Successfully synced"))
             } else if (syncResult is SyncState.NoNewData) {
-                _refreshMessage.value = "You're all caught up!" // TODO("Consider showing a last synced timestamp or time period (Ex: 2 hrs ago)")
+                _effect.send(SeriesEffect.ShowSnackbar("You're all caught up!")) // TODO("Consider showing a last synced timestamp or time period (Ex: 2 hrs ago)")
             } else if (syncResult is SyncState.Failure) {
                 delay(50) // Future Update: [1]
-                _refreshMessage.value = syncResult.message
+                _effect.send(SeriesEffect.ShowSnackbar(syncResult.message))
             }
             _isDataRefreshing.value = false
         }
     }
 
-    fun clearRefreshMessage() {
-        _refreshMessage.value = ""
-    }
-
-    fun changeFilterAndSeries(filter: SeriesFilter) {
+    private fun changeFilterAndSeries(filter: SeriesFilter) {
         savedStateHandle[FILTER] = filter
         getSeries(filter)
     }

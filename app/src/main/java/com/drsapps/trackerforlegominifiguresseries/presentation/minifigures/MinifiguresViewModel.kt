@@ -12,8 +12,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,10 +27,13 @@ class MinifiguresViewModel @Inject constructor(
     private val repo: MinifigureRepository
 ) : ViewModel() {
 
-    val filter = savedStateHandle.getStateFlow(FILTER, MinifiguresFilter.ALL)
+    private val filter = savedStateHandle.getStateFlow(FILTER, MinifiguresFilter.ALL)
 
     private val _minifigures = MutableStateFlow(emptyList<Minifigure>())
-    val minifigures = _minifigures.asStateFlow()
+
+    val uiState: StateFlow<MinifiguresUiState> = combine(filter, _minifigures) { filter, minifigures ->
+        MinifiguresUiState(minifigures, filter)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MinifiguresUiState())
 
     private var getMinifiguresJob: Job? = null
 
@@ -35,7 +42,13 @@ class MinifiguresViewModel @Inject constructor(
         getMinifigures(filter.value)
     }
 
-    fun changeFilterAndMinifigures(filter: MinifiguresFilter) {
+    fun onEvent(event: MinifiguresEvent) {
+        when (event) {
+            is MinifiguresEvent.FilterChanged -> changeFilterAndMinifigures(event.filter)
+        }
+    }
+
+    private fun changeFilterAndMinifigures(filter: MinifiguresFilter) {
         savedStateHandle[FILTER] = filter
         getMinifigures(filter)
     }

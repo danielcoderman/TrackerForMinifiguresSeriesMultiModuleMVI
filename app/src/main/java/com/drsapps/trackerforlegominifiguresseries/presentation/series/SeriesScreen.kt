@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,63 +47,48 @@ fun SeriesScreen(
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean
 ) {
-    val filter by viewModel.filter.collectAsStateWithLifecycle()
-    val series by viewModel.series.collectAsStateWithLifecycle()
-    val isRefreshing by viewModel.isDataRefreshing.collectAsStateWithLifecycle()
-    val refreshMessage by viewModel.refreshMessage.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Hoisted here, rather than inside the stateless SeriesScreen below, so this effect
+    // collector and the Scaffold that displays the snackbar share the same SnackbarHostState.
+    // A Channel-backed effect is delivered once to whichever collector is attached when it's
+    // sent, so unlike a value sitting in State there's no stale value left behind to clear when
+    // the screen leaves composition.
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is SeriesEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
+            }
+        }
+    }
 
     SeriesScreen(
-        series = series,
-        filter = filter,
-        changeFilterAndSeries = viewModel::changeFilterAndSeries,
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
         onSeriesImageClick = onSeriesImageClick,
         onSeriesClick = onSeriesClick,
         onSearchClicked = onSearchClicked,
         onVisibilityClicked = onVisibilityClicked,
         isNavigationRailShown = isNavigationRailShown,
-        isRefreshing = isRefreshing,
-        refreshData = viewModel::refreshData,
-        refreshMessage = refreshMessage,
-        clearRefreshMessage = viewModel::clearRefreshMessage
+        snackbarHostState = snackbarHostState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeriesScreen(
-    series: List<Series>,
-    filter: SeriesFilter,
-    changeFilterAndSeries: (SeriesFilter) -> Unit,
+    uiState: SeriesUiState,
+    onEvent: (SeriesEvent) -> Unit,
     onSeriesImageClick: (id: Int) -> Unit,
     onSeriesClick: (id: Int, title: String) -> Unit,
     onSearchClicked: () -> Unit,
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean,
-    isRefreshing: Boolean,
-    refreshData: () -> Unit,
-    refreshMessage: String,
-    clearRefreshMessage: () -> Unit
+    snackbarHostState: SnackbarHostState
 ) {
-    DisposableEffect(Unit) {
-        // Code can be placed here to run when DisposableEffect enters the composition
-
-        // This runs when the DisposableEffect composable leaves the composition
-        onDispose {
-            // Clear the refresh message when DisposableEffect leaves the composition which is when
-            // the SeriesScreen composable leaves the composition. Why do this? Because if the user
-            // reads the refresh message through the snackbar and leaves to another screen before
-            // the snackbar disappears, then when returning to the Series screen they will see a
-            // snackbar with the same refresh message again (The ViewModel didn't get destroyed),
-            // and we don't want that.
-            clearRefreshMessage()
-        }
-    }
-
     // Used for collapsing or hiding the top app bar
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    // Used to show a snackbar
-    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -122,14 +106,6 @@ fun SeriesScreen(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { paddingValues ->
-        LaunchedEffect(refreshMessage) {
-            if (refreshMessage.isNotEmpty()) {
-                snackbarHostState.showSnackbar(refreshMessage)
-                // Clear the refresh message once the snackbar has disappeared
-                clearRefreshMessage()
-            }
-        }
-
         // to reset scroll
         val lazyGridState = rememberLazyGridState()
 
@@ -140,22 +116,22 @@ fun SeriesScreen(
                 .fillMaxSize()
         ) {
             SeriesFiltersScrollableTabRow(
-                filter = filter,
+                filter = uiState.filter,
                 resetScrollingPosition = {
                     lazyGridState.scrollToItem(0)
                 },
-                changeFilterAndSeries = changeFilterAndSeries,
+                changeFilterAndSeries = { filter -> onEvent(SeriesEvent.FilterChanged(filter)) },
                 isNavigationRailShown = isNavigationRailShown
             )
 
-            if (series.isEmpty()) {
+            if (uiState.series.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(start = 16.dp, top = 16.dp)
                 ) {
-                    when (filter) {
+                    when (uiState.filter) {
                         // Note: Don't have to worry about the case where the "All" filter displays
                         // no series. That would really only happen if someone purposely hides
                         // all the series. Showing a blank screen is fine in that case.
@@ -167,8 +143,8 @@ fun SeriesScreen(
                 }
             } else {
                 PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = refreshData,
+                    isRefreshing = uiState.isRefreshing,
+                    onRefresh = { onEvent(SeriesEvent.Refresh) },
                 ) {
                     LazyVerticalGrid(
                         modifier = Modifier.fillMaxSize(),
@@ -178,12 +154,12 @@ fun SeriesScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(series) { series ->
+                        items(uiState.series) { series ->
                             SeriesCard(
                                 series = series,
                                 onSeriesImageClick = onSeriesImageClick,
                                 onSeriesClick = onSeriesClick,
-                                filter = filter
+                                filter = uiState.filter
                             )
                         }
                     }
@@ -199,39 +175,39 @@ fun SeriesScreen(
 fun SeriesScreenPreview() {
     TrackerForLegoMinifiguresSeriesTheme {
         SeriesScreen(
-            series = listOf(
-                Series(
-                    id = 1,
-                    name = "Series 1",
-                    imageUrl = "",
-                    numOfMinifigs = 16,
-                    releaseDate = "2010-06-01",
-                    favorite = true,
-                    numOfMinifigsCollected = 12,
-                    numOfMinifigsHidden = 2
+            uiState = SeriesUiState(
+                series = listOf(
+                    Series(
+                        id = 1,
+                        name = "Series 1",
+                        imageUrl = "",
+                        numOfMinifigs = 16,
+                        releaseDate = "2010-06-01",
+                        favorite = true,
+                        numOfMinifigsCollected = 12,
+                        numOfMinifigsHidden = 2
+                    ),
+                    Series(
+                        id = 2,
+                        name = "Series 2",
+                        imageUrl = "",
+                        numOfMinifigs = 16,
+                        releaseDate = "2010-09-01",
+                        favorite = true,
+                        numOfMinifigsCollected = 13,
+                        numOfMinifigsHidden = 0
+                    )
                 ),
-                Series(
-                    id = 2,
-                    name = "Series 2",
-                    imageUrl = "",
-                    numOfMinifigs = 16,
-                    releaseDate = "2010-09-01",
-                    favorite = true,
-                    numOfMinifigsCollected = 13,
-                    numOfMinifigsHidden = 0
-                )
+                filter = SeriesFilter.FAVORITES,
+                isRefreshing = false
             ),
-            filter = SeriesFilter.FAVORITES,
-            changeFilterAndSeries = {},
+            onEvent = {},
             onSeriesImageClick = {},
             onSeriesClick = { _,_ -> },
             onSearchClicked = {},
             onVisibilityClicked = {},
             isNavigationRailShown = false,
-            isRefreshing = false,
-            refreshData = {},
-            refreshMessage = "",
-            clearRefreshMessage = {}
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }
