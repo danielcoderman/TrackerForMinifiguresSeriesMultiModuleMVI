@@ -41,14 +41,11 @@ fun MinifiguresScreen(
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean
 ) {
-
-    val filter by viewModel.filter.collectAsStateWithLifecycle()
-    val minifigures by viewModel.minifigures.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MinifiguresScreen(
-        filter = filter,
-        minifigures = minifigures,
-        changeFilterAndMinifigures = viewModel::changeFilterAndMinifigures,
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
         onMinifigureClick = onMinifigureClick,
         onSearchClicked = onSearchClicked,
         onVisibilityClicked = onVisibilityClicked,
@@ -60,9 +57,8 @@ fun MinifiguresScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MinifiguresScreen(
-    filter: MinifiguresFilter,
-    minifigures: List<Minifigure>,
-    changeFilterAndMinifigures: (MinifiguresFilter) -> Unit,
+    uiState: MinifiguresUiState,
+    onEvent: (MinifiguresEvent) -> Unit,
     onMinifigureClick: (id: Int, title: String) -> Unit,
     onSearchClicked: () -> Unit,
     onVisibilityClicked: () -> Unit,
@@ -95,22 +91,22 @@ fun MinifiguresScreen(
             val lazyGridState = rememberLazyGridState()
 
             MinifiguresFiltersScrollableTabRow(
-                filter = filter,
+                filter = uiState.filter,
                 resetScrollingPosition = {
                     lazyGridState.scrollToItem(0)
                 },
-                changeFilterAndMinifigures = changeFilterAndMinifigures,
+                changeFilterAndMinifigures = { filter -> onEvent(MinifiguresEvent.FilterChanged(filter)) },
                 isNavigationRailShown = isNavigationRailShown
             )
 
-            if (minifigures.isEmpty()) {
+            if (uiState.minifigures.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(start = 16.dp, top = 16.dp)
                 ) {
-                    when (filter) {
+                    when (uiState.filter) {
                         // Note: Don't have to worry about the case where the "All" filter displays
                         // no minifigures. That would really only happen if someone purposely hides
                         // all the series. Showing a blank screen is fine in that case.
@@ -130,11 +126,11 @@ fun MinifiguresScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(minifigures) { minifigure ->
+                    items(uiState.minifigures) { minifigure ->
                         MinifigureImageCard(
                             minifigure = minifigure,
                             onClick = onMinifigureClick,
-                            filter = filter
+                            filter = uiState.filter
                         )
                     }
                 }
@@ -149,62 +145,64 @@ fun MinifiguresScreen(
 fun MinifiguresScreenPreview() {
     TrackerForLegoMinifiguresSeriesTheme {
         MinifiguresScreen(
-            filter = MinifiguresFilter.ALL,
-            minifigures = listOf(
-                Minifigure(
-                    id = 1,
-                    name = "Minifig 1",
-                    imageUrl = "",
-                    positionInSeries = 1,
-                    seriesId = 1,
-                    favorite = false,
-                    collected = true,
-                    wishListed = false,
-                    hidden = false,
-                    numOfCollectedInventoryItems = 5,
-                    inventorySize = 5
+            uiState = MinifiguresUiState(
+                minifigures = listOf(
+                    Minifigure(
+                        id = 1,
+                        name = "Minifig 1",
+                        imageUrl = "",
+                        positionInSeries = 1,
+                        seriesId = 1,
+                        favorite = false,
+                        collected = true,
+                        wishListed = false,
+                        hidden = false,
+                        numOfCollectedInventoryItems = 5,
+                        inventorySize = 5
+                    ),
+                    Minifigure(
+                        id = 2,
+                        name = "Minifig 2",
+                        imageUrl = "",
+                        positionInSeries = 2,
+                        seriesId = 1,
+                        favorite = false,
+                        collected = false,
+                        wishListed = false,
+                        hidden = false,
+                        numOfCollectedInventoryItems = 2,
+                        inventorySize = 5,
+                    ),
+                    Minifigure(
+                        id = 3,
+                        name = "Minifig 3",
+                        imageUrl = "",
+                        positionInSeries = 3,
+                        seriesId = 1,
+                        favorite = false,
+                        collected = false,
+                        wishListed = false,
+                        hidden = false,
+                        numOfCollectedInventoryItems = 0,
+                        inventorySize = 5
+                    ),
+                    Minifigure(
+                        id = 4,
+                        name = "Minifig 4",
+                        imageUrl = "",
+                        positionInSeries = 4,
+                        seriesId = 1,
+                        favorite = false,
+                        collected = true,
+                        wishListed = false,
+                        hidden = false,
+                        numOfCollectedInventoryItems = 5,
+                        inventorySize = 5
+                    )
                 ),
-                Minifigure(
-                    id = 2,
-                    name = "Minifig 2",
-                    imageUrl = "",
-                    positionInSeries = 2,
-                    seriesId = 1,
-                    favorite = false,
-                    collected = false,
-                    wishListed = false,
-                    hidden = false,
-                    numOfCollectedInventoryItems = 2,
-                    inventorySize = 5,
-                ),
-                Minifigure(
-                    id = 3,
-                    name = "Minifig 3",
-                    imageUrl = "",
-                    positionInSeries = 3,
-                    seriesId = 1,
-                    favorite = false,
-                    collected = false,
-                    wishListed = false,
-                    hidden = false,
-                    numOfCollectedInventoryItems = 0,
-                    inventorySize = 5
-                ),
-                Minifigure(
-                    id = 4,
-                    name = "Minifig 4",
-                    imageUrl = "",
-                    positionInSeries = 4,
-                    seriesId = 1,
-                    favorite = false,
-                    collected = true,
-                    wishListed = false,
-                    hidden = false,
-                    numOfCollectedInventoryItems = 5,
-                    inventorySize = 5
-                )
-            ),
-            changeFilterAndMinifigures = {},
+                filter = MinifiguresFilter.ALL
+            ) ,
+            onEvent = {},
             onMinifigureClick = {_,_ ->},
             onSearchClicked = {},
             onVisibilityClicked = {},
