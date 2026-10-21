@@ -47,7 +47,7 @@ fun SeriesScreen(
     onVisibilityClicked: () -> Unit,
     isNavigationRailShown: Boolean
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Hoisted here, rather than inside the stateless SeriesScreen below, so this effect
     // collector and the Scaffold that displays the snackbar share the same SnackbarHostState.
@@ -64,7 +64,7 @@ fun SeriesScreen(
     }
 
     SeriesScreen(
-        state = state,
+        uiState = uiState,
         onEvent = viewModel::onEvent,
         onSeriesImageClick = onSeriesImageClick,
         onSeriesClick = onSeriesClick,
@@ -78,7 +78,7 @@ fun SeriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeriesScreen(
-    state: SeriesState,
+    uiState: SeriesUiState,
     onEvent: (SeriesEvent) -> Unit,
     onSeriesImageClick: (id: Int) -> Unit,
     onSeriesClick: (id: Int, title: String) -> Unit,
@@ -116,7 +116,7 @@ fun SeriesScreen(
                 .fillMaxSize()
         ) {
             SeriesFiltersScrollableTabRow(
-                filter = state.filter,
+                filter = uiState.filter,
                 resetScrollingPosition = {
                     lazyGridState.scrollToItem(0)
                 },
@@ -124,14 +124,14 @@ fun SeriesScreen(
                 isNavigationRailShown = isNavigationRailShown
             )
 
-            if (state.series.isEmpty()) {
+            if (uiState.series.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(start = 16.dp, top = 16.dp)
                 ) {
-                    when (state.filter) {
+                    when (uiState.filter) {
                         // Note: Don't have to worry about the case where the "All" filter displays
                         // no series. That would really only happen if someone purposely hides
                         // all the series. Showing a blank screen is fine in that case.
@@ -143,7 +143,7 @@ fun SeriesScreen(
                 }
             } else {
                 PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
+                    isRefreshing = uiState.isRefreshing,
                     onRefresh = { onEvent(SeriesEvent.Refresh) },
                 ) {
                     LazyVerticalGrid(
@@ -154,12 +154,12 @@ fun SeriesScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.series) { series ->
+                        items(uiState.series) { series ->
                             SeriesCard(
                                 series = series,
                                 onSeriesImageClick = onSeriesImageClick,
                                 onSeriesClick = onSeriesClick,
-                                filter = state.filter
+                                filter = uiState.filter
                             )
                         }
                     }
@@ -175,7 +175,7 @@ fun SeriesScreen(
 fun SeriesScreenPreview() {
     TrackerForLegoMinifiguresSeriesTheme {
         SeriesScreen(
-            state = SeriesState(
+            uiState = SeriesUiState(
                 series = listOf(
                     Series(
                         id = 1,

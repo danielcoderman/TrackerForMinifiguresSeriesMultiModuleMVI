@@ -7,7 +7,7 @@ import com.drsapps.trackerforlegominifiguresseries.presentation.util.SeriesFilte
 // separate StateFlows (filter, series, isDataRefreshing, refreshMessage) currently exposed by
 // SeriesViewModel. Note that refreshMessage is intentionally NOT part of this state - see
 // SeriesEffect below.
-data class SeriesState(
+data class SeriesUiState(
     val series: List<Series> = emptyList(),
     val filter: SeriesFilter = SeriesFilter.ALL,
     val isRefreshing: Boolean = false

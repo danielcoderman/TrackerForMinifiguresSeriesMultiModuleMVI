@@ -56,12 +56,12 @@ class SeriesViewModel @Inject constructor(
 
     // The single state SeriesScreen renders from. Recomputed whenever filter, series, or
     // isDataRefreshing changes.
-    val state: StateFlow<SeriesState> = combine(
+    val uiState: StateFlow<SeriesUiState> = combine(
         filter,
         series,
         isDataRefreshing
     ) { filter, series, isRefreshing ->
-        SeriesState(
+        SeriesUiState(
             series = series,
             filter = filter,
             isRefreshing = isRefreshing
@@ -69,7 +69,7 @@ class SeriesViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SeriesState(filter = filter.value)
+        initialValue = SeriesUiState(filter = filter.value)
     )
 
     private var getSeriesJob: Job? = null
