@@ -13,6 +13,7 @@ import com.drsapps.trackerforlegominifiguresseries.util.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,8 +42,11 @@ class SeriesViewModel @Inject constructor(
     private val _isDataRefreshing = MutableStateFlow(false)
     val isDataRefreshing = _isDataRefreshing.asStateFlow()
 
-    private val _refreshMessage = MutableStateFlow("")
-    val refreshMessage = _refreshMessage.asStateFlow()
+    // One-shot outcomes of a sync (e.g. "Successfully synced"). A Channel, unlike a StateFlow,
+    // delivers each value to exactly one collector and then discards it - so there's no stale
+    // value left behind to replay when the screen re-subscribes, and nothing to manually clear.
+    private val _effect = Channel<SeriesEffect>()
+    val effect = _effect.receiveAsFlow()
 
     // The single state SeriesScreen will eventually render from (wired in a later step).
     // Recomputed whenever filter, series, or isDataRefreshing changes.
@@ -89,19 +94,15 @@ class SeriesViewModel @Inject constructor(
         refreshDataJob = viewModelScope.launch {
             val syncResult = syncDataUseCase()
             if (syncResult is SyncState.Success) {
-                _refreshMessage.value = "Successfully synced"
+                _effect.send(SeriesEffect.ShowSnackbar("Successfully synced"))
             } else if (syncResult is SyncState.NoNewData) {
-                _refreshMessage.value = "You're all caught up!" // TODO("Consider showing a last synced timestamp or time period (Ex: 2 hrs ago)")
+                _effect.send(SeriesEffect.ShowSnackbar("You're all caught up!")) // TODO("Consider showing a last synced timestamp or time period (Ex: 2 hrs ago)")
             } else if (syncResult is SyncState.Failure) {
                 delay(50) // Future Update: [1]
-                _refreshMessage.value = syncResult.message
+                _effect.send(SeriesEffect.ShowSnackbar(syncResult.message))
             }
             _isDataRefreshing.value = false
         }
-    }
-
-    fun clearRefreshMessage() {
-        _refreshMessage.value = ""
     }
 
     fun changeFilterAndSeries(filter: SeriesFilter) {

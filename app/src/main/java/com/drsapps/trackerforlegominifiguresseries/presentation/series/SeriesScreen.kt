@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -51,7 +50,20 @@ fun SeriesScreen(
     val filter by viewModel.filter.collectAsStateWithLifecycle()
     val series by viewModel.series.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isDataRefreshing.collectAsStateWithLifecycle()
-    val refreshMessage by viewModel.refreshMessage.collectAsStateWithLifecycle()
+
+    // Hoisted here, rather than inside the stateless SeriesScreen below, so this effect
+    // collector and the Scaffold that displays the snackbar share the same SnackbarHostState.
+    // A Channel-backed effect is delivered once to whichever collector is attached when it's
+    // sent, so unlike the old refreshMessage StateFlow there's no stale value left behind to
+    // clear when the screen leaves composition.
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is SeriesEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
+            }
+        }
+    }
 
     SeriesScreen(
         series = series,
@@ -64,8 +76,7 @@ fun SeriesScreen(
         isNavigationRailShown = isNavigationRailShown,
         isRefreshing = isRefreshing,
         refreshData = viewModel::refreshData,
-        refreshMessage = refreshMessage,
-        clearRefreshMessage = viewModel::clearRefreshMessage
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -82,29 +93,10 @@ fun SeriesScreen(
     isNavigationRailShown: Boolean,
     isRefreshing: Boolean,
     refreshData: () -> Unit,
-    refreshMessage: String,
-    clearRefreshMessage: () -> Unit
+    snackbarHostState: SnackbarHostState
 ) {
-    DisposableEffect(Unit) {
-        // Code can be placed here to run when DisposableEffect enters the composition
-
-        // This runs when the DisposableEffect composable leaves the composition
-        onDispose {
-            // Clear the refresh message when DisposableEffect leaves the composition which is when
-            // the SeriesScreen composable leaves the composition. Why do this? Because if the user
-            // reads the refresh message through the snackbar and leaves to another screen before
-            // the snackbar disappears, then when returning to the Series screen they will see a
-            // snackbar with the same refresh message again (The ViewModel didn't get destroyed),
-            // and we don't want that.
-            clearRefreshMessage()
-        }
-    }
-
     // Used for collapsing or hiding the top app bar
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    // Used to show a snackbar
-    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -122,14 +114,6 @@ fun SeriesScreen(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { paddingValues ->
-        LaunchedEffect(refreshMessage) {
-            if (refreshMessage.isNotEmpty()) {
-                snackbarHostState.showSnackbar(refreshMessage)
-                // Clear the refresh message once the snackbar has disappeared
-                clearRefreshMessage()
-            }
-        }
-
         // to reset scroll
         val lazyGridState = rememberLazyGridState()
 
@@ -230,8 +214,7 @@ fun SeriesScreenPreview() {
             isNavigationRailShown = false,
             isRefreshing = false,
             refreshData = {},
-            refreshMessage = "",
-            clearRefreshMessage = {}
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }
