@@ -15,8 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +43,24 @@ class SeriesViewModel @Inject constructor(
     private val _refreshMessage = MutableStateFlow("")
     val refreshMessage = _refreshMessage.asStateFlow()
 
+    // The single state SeriesScreen will eventually render from (wired in a later step).
+    // Recomputed whenever filter, series, or isDataRefreshing changes.
+    val state: StateFlow<SeriesState> = combine(
+        filter,
+        series,
+        isDataRefreshing
+    ) { filter, series, isRefreshing ->
+        SeriesState(
+            series = series,
+            filter = filter,
+            isRefreshing = isRefreshing
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SeriesState(filter = filter.value)
+    )
+
     private var getSeriesJob: Job? = null
 
     private var refreshDataJob: Job? = null
@@ -46,6 +68,16 @@ class SeriesViewModel @Inject constructor(
     init {
         Log.d("SeriesViewModel", "Created")
         getSeries(filter.value)
+    }
+
+    // The single entry point user intents will eventually flow through (SeriesScreen is wired
+    // to call this, instead of the named methods below, in a later step). For now it just
+    // forwards to those existing methods.
+    fun onEvent(event: SeriesEvent) {
+        when (event) {
+            is SeriesEvent.FilterChanged -> changeFilterAndSeries(event.filter)
+            SeriesEvent.Refresh -> refreshData()
+        }
     }
 
     // This function fetches and saves the latest series and minifigure data
