@@ -48,15 +48,6 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
-
-    sourceSets {
-        // Adds exported schema location as test app assets.
-        getByName("androidTest").assets.srcDir("$projectDir/schemas")
     }
 
     buildTypes {
@@ -112,6 +103,7 @@ android {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":core:database"))
 
     val navVersion = "2.8.6"
     val roomVersion = "2.6.1"
@@ -157,13 +149,10 @@ dependencies {
     implementation("androidx.hilt:hilt-work:1.2.0")
     ksp("androidx.hilt:hilt-compiler:1.2.0")
 
-    // Room
+    // Room - only room-runtime is needed directly here, for Room.databaseBuilder(...) in
+    // AppModule. The @Entity/@Dao/@Database classes (and so the KSP compiler that processes
+    // them) now live in core/database.
     implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    // Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$roomVersion")
-    // Paging 3 Integration
-    implementation("androidx.room:room-paging:$roomVersion")
 
     // Coil (https://coil-kt.github.io/coil/changelog/)
     implementation("io.coil-kt:coil-compose:2.6.0")
@@ -210,8 +199,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    // Room Migration Test
-    androidTestImplementation("androidx.room:room-testing:$roomVersion")
     // This allows suspend functions to be invoked in tests with the help of "runTest"
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
 }

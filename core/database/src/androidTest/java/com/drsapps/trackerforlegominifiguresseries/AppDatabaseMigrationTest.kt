@@ -1,6 +1,6 @@
 package com.drsapps.trackerforlegominifiguresseries
 
-import androidx.datastore.core.IOException
+import java.io.IOException
 import androidx.room.testing.MigrationTestHelper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry

@@ -18,10 +18,8 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-dependencies {
-    // Only the annotation classes (@Entity, @ColumnInfo, @PrimaryKey, @ForeignKey, @Index) -
-    // the Room runtime and the KSP compiler stay with whichever module owns the @Database
-    // (core/database, once that's extracted). See the note on Series/Minifigure/
-    // MinifigureInventoryItem for why a "pure model" module needs this at all.
-    implementation("androidx.room:room-common:2.6.1")
-}
+// No dependencies: every class here is a plain Kotlin data class with zero framework imports.
+// Series/Minifigure/MinifigureInventoryItem (the Room entities) moved to core/database instead -
+// KSP can't resolve a Room entity declared in a plain kotlin("jvm") module from an Android
+// library module's annotation processor (a known cross-platform-type KSP limitation), and
+// conceptually they belong next to the @Dao/@Database that processes them anyway.

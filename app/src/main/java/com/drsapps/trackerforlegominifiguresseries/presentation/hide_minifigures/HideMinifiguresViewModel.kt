@@ -14,6 +14,7 @@ import com.drsapps.trackerforlegominifiguresseries.domain.repository.AppUsageRep
 import com.drsapps.trackerforlegominifiguresseries.domain.repository.MinifigureRepository
 import com.drsapps.trackerforlegominifiguresseries.domain.repository.SeriesRepository
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Constants.SELECTED_SERIES
+import com.drsapps.trackerforlegominifiguresseries.presentation.util.SeriesIdAndNameSaver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,7 +40,7 @@ class HideMinifiguresViewModel @Inject constructor(
     @OptIn(SavedStateHandleSaveableApi::class)
     var selectedSeries by savedStateHandle.saveable(
         key = SELECTED_SERIES,
-        stateSaver = SeriesIdAndName.saver
+        stateSaver = SeriesIdAndNameSaver
     ) {
        mutableStateOf(SeriesIdAndName(-1, ""))
     }
