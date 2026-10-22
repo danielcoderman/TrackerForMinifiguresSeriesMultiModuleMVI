@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Tracker for Minifigures Series"
 include(":app")
+include(":core:model")
