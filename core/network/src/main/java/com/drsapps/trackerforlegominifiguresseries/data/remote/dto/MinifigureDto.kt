@@ -1,6 +1,5 @@
 package com.drsapps.trackerforlegominifiguresseries.data.remote.dto
 
-import com.drsapps.trackerforlegominifiguresseries.domain.model.PartialMinifigure
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,14 +12,3 @@ data class MinifigureDto(
     @SerialName("series_id") val seriesId: Int,
     @SerialName("inventory_size") val inventorySize: Int
 )
-
-fun MinifigureDto.toPartialMinifigure(): PartialMinifigure {
-    return PartialMinifigure(
-        id = id,
-        name = name,
-        imageUrl = imageUrl,
-        positionInSeries = positionInSeries,
-        seriesId = seriesId,
-        inventorySize = inventorySize
-    )
-}

@@ -1,6 +1,5 @@
 package com.drsapps.trackerforlegominifiguresseries.data.remote.dto
 
-import com.drsapps.trackerforlegominifiguresseries.domain.model.PartialSeries
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,13 +11,3 @@ data class SeriesDto(
     @SerialName("num_of_minifigs") val numOfMinifigs: Int,
     @SerialName("release_date") val releaseDate: String
 )
-
-fun SeriesDto.toPartialSeries(): PartialSeries {
-    return PartialSeries(
-        id = id,
-        name = name,
-        imageUrl = imageUrl,
-        numOfMinifigs = numOfMinifigs,
-        releaseDate = releaseDate
-    )
-}

@@ -3,10 +3,13 @@ package com.drsapps.trackerforlegominifiguresseries.data.repository
 import android.util.Log
 import com.drsapps.trackerforlegominifiguresseries.data.local.UpsertDao
 import com.drsapps.trackerforlegominifiguresseries.data.remote.SeriesMinifigCatalogApi
-import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.toPartialMinifigure
-import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.toPartialMinifigureInventoryItem
-import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.toPartialSeries
+import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.MinifigureDto
+import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.MinifigureInventoryItemDto
+import com.drsapps.trackerforlegominifiguresseries.data.remote.dto.SeriesDto
 import com.drsapps.trackerforlegominifiguresseries.domain.model.AppState
+import com.drsapps.trackerforlegominifiguresseries.domain.model.PartialMinifigure
+import com.drsapps.trackerforlegominifiguresseries.domain.model.PartialMinifigureInventoryItem
+import com.drsapps.trackerforlegominifiguresseries.domain.model.PartialSeries
 import com.drsapps.trackerforlegominifiguresseries.domain.repository.SyncRepository
 import com.drsapps.trackerforlegominifiguresseries.util.SyncState
 import kotlinx.coroutines.Dispatchers
@@ -123,6 +126,43 @@ class SyncRepositoryImpl(
             }
         }
     }
+}
+
+// Mapping between network DTOs and the Room "Partial" upsert types. Lives here, next to
+// SyncRepositoryImpl (the only caller), because core/network and core/database are siblings -
+// neither should depend on the other - and this is exactly the cross-cutting concern core/data
+// will own once it's extracted.
+private fun SeriesDto.toPartialSeries(): PartialSeries {
+    return PartialSeries(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
+        numOfMinifigs = numOfMinifigs,
+        releaseDate = releaseDate
+    )
+}
+
+private fun MinifigureDto.toPartialMinifigure(): PartialMinifigure {
+    return PartialMinifigure(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
+        positionInSeries = positionInSeries,
+        seriesId = seriesId,
+        inventorySize = inventorySize
+    )
+}
+
+private fun MinifigureInventoryItemDto.toPartialMinifigureInventoryItem(): PartialMinifigureInventoryItem {
+    return PartialMinifigureInventoryItem(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
+        partUrl = partUrl,
+        quantity = quantity,
+        type = type,
+        minifigureId = minifigureId
+    )
 }
 
 // TODO("Consider if you should send a personalized message like 'Too many api requests in window' when the user makes more than 100 requests in a 15 minute window. I think this would fall under the network response error currently.")

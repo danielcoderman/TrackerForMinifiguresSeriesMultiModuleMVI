@@ -104,6 +104,7 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:database"))
+    implementation(project(":core:network"))
 
     val navVersion = "2.8.6"
     val roomVersion = "2.6.1"
