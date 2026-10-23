@@ -2,6 +2,12 @@
     <!-- Accessibility Content Descriptions -->
     <string name="navigate_back">Navigate Back</string>
     <string name="clear_search_text">Clear search text</string>
+    <string name="add_to_collected">Add %1$s to collected</string>
+    <string name="remove_from_collected">Remove %1$s from collected</string>
+    <string name="add_to_wishlist">Add %1$s to wishlist</string>
+    <string name="remove_from_wishlist">Remove %1$s from wishlist</string>
+    <string name="add_to_favorites">Add %1$s to favorites</string>
+    <string name="remove_from_favorites">Remove %1$s from favorites</string>
 
     <!-- Preview-only placeholders for SeriesAndMinifiguresTopAppBar, which takes its real
          content-description strings as @StringRes parameters from the feature that calls it. -->

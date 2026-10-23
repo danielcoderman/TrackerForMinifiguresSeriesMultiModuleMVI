@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.drsapps.trackerforlegominifiguresseries.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R as CoreUiR
 import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +69,7 @@ fun ImageViewerModal(
             AsyncImage(
                 model = imageUrl,
                 contentDescription = itemName,
-                error = painterResource(id = R.drawable.image_placeholder),
+                error = painterResource(id = CoreUiR.drawable.image_placeholder),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.weight(1f, false).aspectRatio(1f).padding(horizontal = 16.dp)
             )

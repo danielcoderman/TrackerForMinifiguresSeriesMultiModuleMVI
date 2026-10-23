@@ -1,0 +1,6 @@
+<resources>
+    <string name="search_series">Search series</string>
+    <string name="hide_series">Hide series</string>
+    <string name="switch_to_grid_view">Switch to grid view</string>
+    <string name="switch_to_list_view">Switch to list view</string>
+</resources>

@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import coil.compose.AsyncImage
-import com.drsapps.trackerforlegominifiguresseries.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Minifigure
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.MinifiguresFilter
 import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme

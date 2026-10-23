@@ -9,14 +9,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.drsapps.trackerforlegominifiguresseries.presentation.hide_minifigures.HideMinifiguresScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.hide_series.HideSeriesScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.series.hide_series.HideSeriesScreen
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.MinifigureDetailsScreen
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures.MinifiguresScreen
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures_search.MinifiguresSearchScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.series.SeriesScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.series_details.SeriesDetailsScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.series_image.SeriesImageScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.series_search.SeriesSearchScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.series.SeriesScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.series.series_details.SeriesDetailsScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.series.series_image.SeriesImageScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.series.series_search.SeriesSearchScreen
 import com.drsapps.trackerforlegominifiguresseries.presentation.splash.SplashScreen
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Constants.MINIFIGURE_ID
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Constants.SERIES_ID
@@ -52,6 +52,7 @@ fun AppNavHost(
         }
         composable(route = Screen.Series.route) {
             SeriesScreen(
+                title = Screen.Series.title!!,
                 onSeriesImageClick = { seriesId ->
                     navController.navigate(Screen.SeriesImage.route + "/$seriesId")
                 },
@@ -119,6 +120,7 @@ fun AppNavHost(
         }
         composable(route = Screen.HideSeries.route) {
             HideSeriesScreen(
+                title = Screen.HideSeries.title!!,
                 onNavigateBack = {
                     navController.navigateUp()
                 }

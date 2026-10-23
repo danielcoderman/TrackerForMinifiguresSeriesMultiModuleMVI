@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import coil.compose.AsyncImage
-import com.drsapps.trackerforlegominifiguresseries.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.MinifigureInventoryItem
 import com.drsapps.trackerforlegominifiguresseries.domain.model.MinifigureWithSeriesName
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.components.ImageViewerModal
