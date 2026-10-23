@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.SeriesFilter
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.seriesFilters
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

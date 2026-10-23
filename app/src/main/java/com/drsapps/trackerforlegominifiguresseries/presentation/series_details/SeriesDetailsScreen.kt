@@ -23,7 +23,7 @@ import com.drsapps.trackerforlegominifiguresseries.domain.model.Minifigure
 import com.drsapps.trackerforlegominifiguresseries.presentation.series_details.components.MinifigureCard
 import com.drsapps.trackerforlegominifiguresseries.presentation.series_details.components.SeriesDetailsTopAppBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Layout
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun SeriesDetailsScreen(

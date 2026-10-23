@@ -31,12 +31,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Series
-import com.drsapps.trackerforlegominifiguresseries.presentation.components.SeriesAndMinifiguresTopAppBar
+import com.drsapps.trackerforlegominifiguresseries.core.ui.components.SeriesAndMinifiguresTopAppBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.components.SeriesCard
 import com.drsapps.trackerforlegominifiguresseries.presentation.series.components.SeriesFiltersScrollableTabRow
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Screen
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.SeriesFilter
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun SeriesScreen(

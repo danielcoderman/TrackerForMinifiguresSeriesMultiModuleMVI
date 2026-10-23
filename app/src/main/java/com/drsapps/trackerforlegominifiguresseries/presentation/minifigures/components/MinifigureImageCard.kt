@@ -18,7 +18,7 @@ import coil.compose.AsyncImage
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Minifigure
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.MinifiguresFilter
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun MinifigureImageCard(

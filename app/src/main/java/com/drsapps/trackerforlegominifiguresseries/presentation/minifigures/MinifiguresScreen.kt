@@ -26,12 +26,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Minifigure
-import com.drsapps.trackerforlegominifiguresseries.presentation.components.SeriesAndMinifiguresTopAppBar
+import com.drsapps.trackerforlegominifiguresseries.core.ui.components.SeriesAndMinifiguresTopAppBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures.components.MinifigureImageCard
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures.components.MinifiguresFiltersScrollableTabRow
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.MinifiguresFilter
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Screen
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 // TODO("Add snackbar usage here. Use the SeriesScreen as a reference")
 @Composable
 fun MinifiguresScreen(

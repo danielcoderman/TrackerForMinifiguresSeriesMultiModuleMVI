@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drsapps.trackerforlegominifiguresseries.domain.model.SeriesHiddenState
-import com.drsapps.trackerforlegominifiguresseries.presentation.components.BasicTopAppBar
+import com.drsapps.trackerforlegominifiguresseries.core.ui.components.BasicTopAppBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.hide_series.components.SeriesCheckbox
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Screen
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun HideSeriesScreen(

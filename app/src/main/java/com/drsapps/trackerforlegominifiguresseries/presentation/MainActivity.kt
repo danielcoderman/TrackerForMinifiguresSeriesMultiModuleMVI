@@ -40,7 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.navBarScreens
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.navRailScreens
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

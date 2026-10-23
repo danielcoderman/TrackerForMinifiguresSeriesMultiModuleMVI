@@ -42,7 +42,7 @@ import com.drsapps.trackerforlegominifiguresseries.domain.model.MinifigureWithSe
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.components.ImageViewerModal
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.components.MinifigureDetailsTopAppBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.components.MinifigureInventoryScrollableSection
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun MinifigureDetailsScreen(

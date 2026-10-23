@@ -3,7 +3,6 @@
     <string name="app_name">Tracker for Minifigures Series</string>
 
     <!-- Accessibility Content Descriptions -->
-    <string name="navigate_back">Navigate Back</string>
     <string name="add_to_collected">Add %1$s to collected</string>
     <string name="remove_from_collected">Remove %1$s from collected</string>
     <string name="add_to_wishlist">Add %1$s to wishlist</string>
@@ -16,6 +15,5 @@
     <string name="hide_series">Hide series</string>
     <string name="search_minifigures">Search minifigures</string>
     <string name="hide_minifigures">Hide minifigures</string>
-    <string name="clear_search_text">Clear search text</string>
 
 </resources>

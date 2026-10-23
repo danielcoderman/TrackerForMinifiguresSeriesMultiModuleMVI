@@ -1,4 +1,4 @@
-package com.drsapps.trackerforlegominifiguresseries.presentation.components
+package com.drsapps.trackerforlegominifiguresseries.core.ui.components
 
 import android.util.Log
 import android.view.ViewTreeObserver
@@ -41,8 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.drsapps.trackerforlegominifiguresseries.R
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 import kotlinx.coroutines.launch
 
 @Composable

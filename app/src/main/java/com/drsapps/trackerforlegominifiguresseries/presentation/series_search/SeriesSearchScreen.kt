@@ -24,9 +24,9 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Series
-import com.drsapps.trackerforlegominifiguresseries.presentation.components.SearchBar
+import com.drsapps.trackerforlegominifiguresseries.core.ui.components.SearchBar
 import com.drsapps.trackerforlegominifiguresseries.presentation.components.SeriesCard
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -13,8 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.drsapps.trackerforlegominifiguresseries.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R as CoreUiR
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.Layout
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +39,7 @@ fun SeriesDetailsTopAppBar(
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.navigate_back)
+                    contentDescription = stringResource(id = CoreUiR.string.navigate_back)
                 )
             }
         },

@@ -1,4 +1,4 @@
-package com.drsapps.trackerforlegominifiguresseries.presentation.components
+package com.drsapps.trackerforlegominifiguresseries.core.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.drsapps.trackerforlegominifiguresseries.R
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.R
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +79,8 @@ fun SeriesAndMinifiguresTopAppBarPreview() {
             title = "Minifigures",
             onSearchClicked = {},
             onVisibilityClicked = {},
-            searchIconDescResId = R.string.search_minifigures,
-            visibilityIconDescResId = R.string.hide_minifigures,
+            searchIconDescResId = R.string.preview_search_icon_description,
+            visibilityIconDescResId = R.string.preview_visibility_icon_description,
             scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         )
     }

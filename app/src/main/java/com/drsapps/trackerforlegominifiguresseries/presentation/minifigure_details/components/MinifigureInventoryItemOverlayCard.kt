@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.MinifigureInventoryItem
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun MinifigureInventoryItemOverlayCard(

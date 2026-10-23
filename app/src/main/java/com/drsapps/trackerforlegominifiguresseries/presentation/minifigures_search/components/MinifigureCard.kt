@@ -22,7 +22,7 @@ import androidx.lifecycle.Lifecycle
 import coil.compose.AsyncImage
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.MinifigureWithSeriesName
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
 
 @Composable
 fun MinifigureCard(

@@ -27,9 +27,9 @@ import coil.compose.AsyncImage
 import com.drsapps.trackerforlegominifiguresseries.R
 import com.drsapps.trackerforlegominifiguresseries.domain.model.Series
 import com.drsapps.trackerforlegominifiguresseries.presentation.util.SeriesFilter
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.DarkTextColor
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.TrackerForLegoMinifiguresSeriesTheme
-import com.drsapps.trackerforlegominifiguresseries.ui.theme.White
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.DarkTextColor
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.TrackerForLegoMinifiguresSeriesTheme
+import com.drsapps.trackerforlegominifiguresseries.core.ui.theme.White
 
 @Composable
 fun SeriesCard(

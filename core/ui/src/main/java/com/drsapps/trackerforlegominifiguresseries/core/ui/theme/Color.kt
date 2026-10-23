@@ -1,4 +1,4 @@
-package com.drsapps.trackerforlegominifiguresseries.ui.theme
+package com.drsapps.trackerforlegominifiguresseries.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

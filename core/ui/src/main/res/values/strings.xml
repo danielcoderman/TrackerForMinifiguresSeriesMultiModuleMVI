@@ -1,0 +1,10 @@
+<resources>
+    <!-- Accessibility Content Descriptions -->
+    <string name="navigate_back">Navigate Back</string>
+    <string name="clear_search_text">Clear search text</string>
+
+    <!-- Preview-only placeholders for SeriesAndMinifiguresTopAppBar, which takes its real
+         content-description strings as @StringRes parameters from the feature that calls it. -->
+    <string name="preview_search_icon_description">Search</string>
+    <string name="preview_visibility_icon_description">Toggle visibility</string>
+</resources>
