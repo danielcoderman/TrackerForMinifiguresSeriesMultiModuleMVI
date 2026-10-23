@@ -20,6 +20,9 @@ java {
 // module composes both network and database (core/data, once extracted) - see the note next to
 // SyncRepositoryImpl.toPartialSeries() et al. in :app for where that mapping lives for now.
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    // api, not implementation: SeriesMinifigCatalogApi's methods return retrofit2.Response<T>
+    // directly, so that type is part of this module's own public surface - any consumer calling
+    // the API needs retrofit2.Response on its classpath too, not just this module's internals.
+    api("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }

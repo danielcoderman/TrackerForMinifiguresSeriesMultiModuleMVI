@@ -48,7 +48,8 @@ class MainViewModel @Inject constructor(
 
     private suspend fun isDataExistent(): Boolean {
         val appState = appStateRepo.getAppState()
-        if (appState.hasExistingData == null) {
+        val hasExistingData = appState.hasExistingData
+        if (hasExistingData == null) {
             // If series data exists then minifigure data should exist too.
             // This is because whenever series data is inserted the corresponding minifigure
             // data must be inserted too, or else nothing is inserted.
@@ -57,7 +58,7 @@ class MainViewModel @Inject constructor(
             appStateRepo.updateHasExistingDataValue(isSeriesListNotEmpty)
             return isSeriesListNotEmpty
         } else {
-            return appState.hasExistingData
+            return hasExistingData
         }
     }
 

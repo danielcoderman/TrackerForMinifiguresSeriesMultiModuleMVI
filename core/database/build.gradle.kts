@@ -33,7 +33,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:model"))
+    // api: the DAOs return MinifigureHiddenState/MinifigureWithSeriesName/SeriesHiddenState/
+    // SeriesIdAndName (core:model types) directly in their own method signatures.
+    api(project(":core:model"))
 
     val roomVersion = "2.6.1"
     val pagingVersion = "3.3.5"
@@ -44,7 +46,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     // Paging 3 Integration
     implementation("androidx.room:room-paging:$roomVersion")
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    // api: the DAOs return PagingSource<Int, T> directly - Paging isn't an incidental transport
+    // detail here, it's the mechanism Compose consumes all the way up the stack.
+    api("androidx.paging:paging-runtime-ktx:$pagingVersion")
 
     // Test
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
