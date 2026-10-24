@@ -8,11 +8,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.drsapps.trackerforlegominifiguresseries.presentation.hide_minifigures.HideMinifiguresScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.minifigures.hide_minifigures.HideMinifiguresScreen
 import com.drsapps.trackerforlegominifiguresseries.feature.series.hide_series.HideSeriesScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.minifigure_details.MinifigureDetailsScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures.MinifiguresScreen
-import com.drsapps.trackerforlegominifiguresseries.presentation.minifigures_search.MinifiguresSearchScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.minifigures.minifigure_details.MinifigureDetailsScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.minifigures.MinifiguresScreen
+import com.drsapps.trackerforlegominifiguresseries.feature.minifigures.minifigures_search.MinifiguresSearchScreen
 import com.drsapps.trackerforlegominifiguresseries.feature.series.SeriesScreen
 import com.drsapps.trackerforlegominifiguresseries.feature.series.series_details.SeriesDetailsScreen
 import com.drsapps.trackerforlegominifiguresseries.feature.series.series_image.SeriesImageScreen
@@ -128,6 +128,7 @@ fun AppNavHost(
         }
         composable(route = Screen.Minifigures.route) {
             MinifiguresScreen(
+                title = Screen.Minifigures.title!!,
                 onMinifigureClick = { minifigureId, title ->
                     navController.navigate(
                         Screen.MinifigureDetails.route +
@@ -175,6 +176,7 @@ fun AppNavHost(
         }
         composable(route = Screen.HideMinifigures.route) {
             HideMinifiguresScreen(
+                title = Screen.HideMinifigures.title!!,
                 onNavigateBack = {
                     navController.navigateUp()
                 }

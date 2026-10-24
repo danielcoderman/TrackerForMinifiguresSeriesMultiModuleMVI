@@ -30,7 +30,12 @@ android {
 }
 
 dependencies {
+    // core:model and core:database are also exposed transitively through core:data's own api(...)
+    // dependencies, but this module's own source directly imports types from both (SeriesHiddenState/
+    // Layout from core:model; Series/Minifigure from core:database) - so both are declared here too,
+    // rather than relying on core:data's choice to re-expose them.
     implementation(project(":core:model"))
+    implementation(project(":core:database"))
     implementation(project(":core:data"))
     implementation(project(":core:ui"))
 

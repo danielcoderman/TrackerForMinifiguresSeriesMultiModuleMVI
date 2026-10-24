@@ -1,9 +1,4 @@
 <resources>
     <!-- Common -->
     <string name="app_name">Tracker for Minifigures Series</string>
-
-    <!-- Accessibility Content Descriptions -->
-    <string name="search_minifigures">Search minifigures</string>
-    <string name="hide_minifigures">Hide minifigures</string>
-
 </resources>

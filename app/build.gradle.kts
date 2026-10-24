@@ -108,6 +108,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:ui"))
     implementation(project(":feature:series"))
+    implementation(project(":feature:minifigures"))
 
     val navVersion = "2.8.6"
     val roomVersion = "2.6.1"
